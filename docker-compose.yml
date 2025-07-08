@@ -30,5 +30,16 @@ services:
     volumes:
       - ./wazuh/custom-ruleset.xml:/var/ossec/etc/rules/local_rules.xml
 
+  wazuh-agent:
+    image: wazuh/wazuh-agent:4.6.0
+    container_name: wazuh-agent
+    environment:
+      - MANAGER_IP=wazuh-manager
+      - WAZUH_AGENT_NAME=simulated-agent
+    depends_on:
+      - wazuh-manager
+    privileged: true
+
+
 volumes:
   elasticsearch-data:
