@@ -5,3 +5,4 @@
     <match>sshd.*Failed password</match>
   </rule>
 </group>
+
