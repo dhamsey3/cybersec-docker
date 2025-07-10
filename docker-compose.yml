@@ -1,45 +1,68 @@
+version: '3.9'
+
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.2
     container_name: elasticsearch
+    platform: linux/amd64
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
     ports:
-      - "9200:9200"
+      - "9200:9200"  # 🔍 Elasticsearch API
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.2
     container_name: kibana
+    platform: linux/amd64
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
-      - "5601:5601"
+      - "5601:5601"  # 📊 Kibana UI → http://localhost:5601
     depends_on:
       - elasticsearch
 
   wazuh:
-    image: wazuh/wazuh-manager:4.6.0
+    image: wazuh/wazuh-manager:4.5.2
     container_name: wazuh-manager
+    platform: linux/amd64
     ports:
       - "1514:1514/udp"
       - "1515:1515"
       - "55000:55000"
-    volumes:
-      - ./wazuh/custom-ruleset.xml:/var/ossec/etc/rules/local_rules.xml
+    depends_on:
+      - elasticsearch
+
 
   wazuh-agent:
-    image: wazuh/wazuh-agent:4.6.0
+    image: wazuh/wazuh-agent:4.13.0-alpha1
     container_name: wazuh-agent
+    platform: linux/amd64
     environment:
-      - MANAGER_IP=wazuh-manager
+      - MANAGER_IP=wazuh
       - WAZUH_AGENT_NAME=simulated-agent
     depends_on:
-      - wazuh-manager
-    privileged: true
+      - wazuh
+    privileged: true  # ✅ Allows visibility into host activity
+    volumes:
+      - ./simulate-attacks.sh:/root/simulate-attacks.sh
 
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.10.2
+    container_name: filebeat
+    platform: linux/amd64
+    user: root
+    depends_on:
+      - wazuh
+      - elasticsearch
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - wazuh-logs:/var/ossec/logs  # Shared logs from wazuh
+    command: ["--strict.perms=false"]  # Avoid permission errors
 
 volumes:
   elasticsearch-data:
+  wazuh-logs:
