@@ -99,7 +99,8 @@ Here are screenshots from the live system to show dashboards and alert detection
 - **Detection Rule Alert** trigger confirmation
 
 
-```markdown
-![Discover showing user_added](images/kibana3.png)
-![Auditbeat Dashboard](images/kibana2.png)
-![Alert Triggered](images/kibana1.png)
+
+![Discover](images/kibana-1.png)
+![Dashboard](images/kibana-2.png)
+![Alert](images/kibana-3.png)
+
