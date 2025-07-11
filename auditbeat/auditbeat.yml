@@ -1,0 +1,27 @@
+auditbeat.modules:
+  - module: system
+    datasets:
+      - host
+      - user
+      - login
+      - process
+    period: 10s
+
+  - module: file_integrity
+    paths:
+      - /bin
+      - /usr/bin
+      - /sbin
+      - /usr/sbin
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+
+setup.kibana:
+  host: "http://kibana:5601"
+
+setup.template.enabled: true
+setup.template.name: "auditbeat"
+setup.template.pattern: "auditbeat-*"
+
+logging.level: info

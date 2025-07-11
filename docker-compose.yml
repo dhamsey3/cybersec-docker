@@ -4,12 +4,11 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.2
     container_name: elasticsearch
-    platform: linux/amd64
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
     ports:
-      - "9200:9200"  # 🔍 Elasticsearch API
+      - "9200:9200"
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
@@ -20,49 +19,42 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
-      - "5601:5601"  # 📊 Kibana UI → http://localhost:5601
+      - "5601:5601"
     depends_on:
       - elasticsearch
-
-  wazuh:
-    image: wazuh/wazuh-manager:4.5.2
-    container_name: wazuh-manager
-    platform: linux/amd64
-    ports:
-      - "1514:1514/udp"
-      - "1515:1515"
-      - "55000:55000"
-    depends_on:
-      - elasticsearch
-
-
-  wazuh-agent:
-    image: wazuh/wazuh-agent:4.13.0-alpha1
-    container_name: wazuh-agent
-    platform: linux/amd64
-    environment:
-      - MANAGER_IP=wazuh
-      - WAZUH_AGENT_NAME=simulated-agent
-    depends_on:
-      - wazuh
-    privileged: true  # ✅ Allows visibility into host activity
-    volumes:
-      - ./simulate-attacks.sh:/root/simulate-attacks.sh
-
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.10.2
     container_name: filebeat
     platform: linux/amd64
     user: root
-    depends_on:
-      - wazuh
-      - elasticsearch
     volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
-      - wazuh-logs:/var/ossec/logs  # Shared logs from wazuh
-    command: ["--strict.perms=false"]  # Avoid permission errors
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/var/log:ro
+    depends_on:
+      - elasticsearch
+    command: ["--strict.perms=false"]
+
+  auditbeat:
+    image: docker.elastic.co/beats/auditbeat:7.10.2
+    container_name: auditbeat
+    platform: linux/amd64
+    user: root
+    cap_add:
+      - AUDIT_CONTROL
+      - AUDIT_READ
+    volumes:
+      - ./auditbeat/auditbeat.yml:/usr/share/auditbeat/auditbeat.yml:ro
+    depends_on:
+      - elasticsearch
+    command: ["--strict.perms=false"]
+
+  fake-logger:
+    image: busybox
+    container_name: fake-logger
+    volumes:
+      - ./logs:/logs
+    command: /bin/sh -c "while true; do echo '{\"@timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\", \"event\":\"Simulated brute force\"}' >> /logs/test.log; sleep 10; done"
 
 volumes:
   elasticsearch-data:
-  wazuh-logs:
