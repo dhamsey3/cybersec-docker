@@ -78,3 +78,14 @@ Auditbeat will log it in Kibana!
 ---
 
 
+---
+
+### Simulated Threat Detection
+
+To test the setup, we simulated a common attacker behavior:
+
+**Command:**
+```bash
+docker exec -it auditbeat bash
+useradd eviluser
+
