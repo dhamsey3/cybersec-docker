@@ -88,7 +88,7 @@ To test the setup, we simulated a common attacker behavior:
 ```bash
 docker exec -it auditbeat bash
 useradd eviluser
-
+```
 
 ### 📸 Screenshots
 
@@ -97,7 +97,6 @@ Here are screenshots from the live system to show dashboards and alert detection
 - **Kibana Discover** showing `user_added` event  
 - **Auditbeat Dashboard** with real-time activity  
 - **Detection Rule Alert** trigger confirmation
-
 
 
 ![Discover](images/kibana-1.png)
