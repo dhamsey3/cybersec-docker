@@ -1,6 +1,21 @@
-##  CyberSec Monitoring Stack – ELK + Beats
+##  CyberSec monitoring stack – ELK + Beats
 
-A lightweight Security Analyst lab environment using Docker, Elastic Stack, Auditbeat, and Filebeat — designed for log analysis, dashboarding, and threat simulation.
+A hands-on, Docker-based Security Operations Center (SOC) lab environment built for learning and showcasing threat detection, log analysis, and alert engineering.
+
+This project simulates a real-world logging pipeline using Elastic Stack, Auditbeat, Filebeat, and a Fake Logger, providing visibility into endpoint behavior and attacker activity.
+
+---
+
+### Purpose
+This project was built to:
+
+- Showcase practical SIEM skills for Security Analyst roles
+
+- Enable real-time host monitoring and log analysis
+
+- Simulate threat behaviors for alert tuning and incident response
+
+- Serve as a portfolio-ready demo of threat detection and visibility engineering
 
 ---
 
@@ -61,6 +76,7 @@ This stack includes a **fake logger container** that:
 You can also connect to the `auditbeat` container and run:
 
 ```bash
+docker exec -it auditbeat bash
 useradd attacker && su attacker
 ```
 
@@ -102,4 +118,8 @@ Here are screenshots from the live system to show dashboards and alert detection
 ![Discover](images/kibana-1.png)
 ![Dashboard](images/kibana-2.png)
 ![Alert](images/kibana-3.png)
+
+
+
+
 
