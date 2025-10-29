@@ -18,108 +18,108 @@ This project was built to:
 - Serve as a portfolio-ready demo of threat detection and visibility engineering
 
 ---
+# cybersec-docker
 
-###  Stack Components
+Cybersec-Docker — a ready-to-run, Docker Compose based sandbox for security testing, detection development, and incident response practice.
 
-| Component         | Role                                      |
-| ----------------- | ----------------------------------------- |
-| **Elasticsearch** | Log storage and search engine             |
-| **Kibana**        | Visualize logs and build dashboards       |
-| **Auditbeat**     | Host monitoring: users, logins, processes |
-| **Filebeat**      | Log shipper for text-based logs           |
-| **Fake Logger**   | Simulates alert-worthy events  |
+This repository provides a self-contained ELK pipeline (Elasticsearch + Kibana) with preconfigured Beats (Auditbeat and Filebeat) and helper scripts to simulate attacker activity and collect host and file telemetry. It's intended for learners, detection engineers, and incident responders who want a disposable environment to build and test detection rules and playbooks.
 
----
+## Highlights
 
-###  Features
+- Local ELK stack (Elasticsearch + Kibana) orchestrated via `docker-compose.yml`.
+- Preconfigured `auditbeat` and `filebeat` configurations to capture host audit events and logs.
+- `simulate-attacks.sh` to generate reproducible, attack-like activity for testing detections.
+- Logs collected under the `logs/` directory for offline analysis.
 
-* Real-time dashboards: Logins, processes, file changes
-*  Powerful log filtering and timeline reconstruction
-*  Ready for threat detection and alerting
-*  Simulated attacker activity using bash scripts
-*  Written for security analyst portfolios and labs
+## Quick start
 
----
-
-###  How to Run
+1. Start the stack
 
 ```bash
-git clone git@github.com:dhamsey3/CyberSec-Docker.git
+git clone https://github.com/dhamsey3/cybersec-docker.git
 cd cybersec-docker
 docker compose up -d
 ```
 
-* Access **Kibana**: [http://localhost:5601](http://localhost:5601)
-* Elasticsearch: `http://localhost:9200`
-
----
-
-###  Dashboards Included
-
-| Dashboard Title               | Description                                                 |
-| ----------------------------- | ----------------------------------------------------------- |
-| `System Activity – Auditbeat` | Visualizes login events, process activity, and file changes |
-
----
-
-###  Simulating Attacks
-
-This stack includes a **fake logger container** that:
-
-* Writes dummy alerts every 10s
-* Can be extended to simulate:
-
-  * File tampering
-  * Suspicious logins
-  * Privilege escalation
-
-You can also connect to the `auditbeat` container and run:
+2. Run simulated activity (optional)
 
 ```bash
-docker exec -it auditbeat bash
-useradd attacker && su attacker
+./simulate-attacks.sh
 ```
 
-Auditbeat will log it in Kibana!
+3. Open Kibana in your browser:
 
----
+```
+http://localhost:5601
+```
 
-### Ideas for Alerts (Optional Add-on)
+Adjust ports and configuration in `docker-compose.yml`, `auditbeat/`, and `filebeat/` as needed.
 
-* Alert on new user creation
-* Alert on execution of `netcat`, `nmap`, `curl`
-* Alert if `/etc/passwd` is modified
-* Alert if processes run as root
+## How it works (high level)
 
----
+Auditbeat and Filebeat run as containers in the Compose stack and forward events to Elasticsearch. Kibana connects to Elasticsearch and provides dashboards and search/explore capabilities. The `simulate-attacks.sh` script generates sample events (new users, suspicious commands, file changes) which are picked up by the Beats and indexed for analysis.
 
+Simple flow:
 
----
+```
+Simulated activity -> Auditbeat/Filebeat -> Elasticsearch -> Kibana (visualize & alert)
+```
 
-### Simulated Threat Detection
+## Files and configuration
 
-To test the setup, we simulated a common attacker behavior:
+- `docker-compose.yml` — service definitions for Elasticsearch, Kibana, Beats, and helpers.
+- `auditbeat/` — Auditbeat configuration files.
+- `filebeat/` — Filebeat configuration files.
+- `elastic/`, `kibana/` — example service configs used by the Compose stack.
+- `simulate-attacks.sh` — small script to generate attack-like activity for detection testing.
+- `logs/` — collected logs and artifacts for offline analysis.
 
-**Command:**
+## Suggested detection ideas
+
+- Alert on creation of new users
+- Alert on execution of suspicious tooling (e.g., `nc`, `nmap`, scripts in `/tmp`)
+- Notify on changes to critical files (e.g., `/etc/passwd`, `/etc/shadow`)
+- Detect unexpected processes spawning from network-facing services
+
+## Features
+
+- ELK stack ready for local testing
+- Auditbeat and Filebeat pre-configured for host telemetry
+- Simple simulated attack generation
+- Offline logs stored under `logs/` for analysis and sharing
+
+## Try it
+
+Start the stack and run a simulation, then open Kibana:
+
 ```bash
-docker exec -it auditbeat bash
-useradd eviluser
+docker compose up -d
+./simulate-attacks.sh
+# open http://localhost:5601
 ```
 
-### 📸 Screenshots
+## Suggested keywords / tags
 
-Here are screenshots from the live system to show dashboards and alert detections:
+cybersecurity, siem, elk, elasticsearch, kibana, auditbeat, filebeat, docker, docker-compose, detection, incident-response, threat-hunting
 
-- **Kibana Discover** showing `user_added` event  
-- **Auditbeat Dashboard** with real-time activity  
-- **Detection Rule Alert** trigger confirmation
+## Contributing
+
+Contributions welcome. Please open issues or pull requests for fixes, enhancements, or suggested detection rules.
+
+## License
+
+If you haven't chosen one yet, consider adding a `LICENSE` file (MIT is a common choice for sample environments).
+
+---
+
+Maintainer: dhamsey3
 
 
 ![Discover](images/kibana-1.png)
+
 ![Dashboard](images/kibana-2.png)
+
 ![Alert](images/kibana-3.png)
-
-
 
 
 
