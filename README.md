@@ -4,20 +4,15 @@ A hands-on, Docker-based Security Operations Center (SOC) lab environment built 
 
 This project simulates a real-world logging pipeline using Elastic Stack, Auditbeat, Filebeat, and a Fake Logger, providing visibility into endpoint behavior and attacker activity.
 
----
 
 ### Purpose
 This project was built to:
 
-- Showcase practical SIEM skills for Security Analyst roles
 
-- Enable real-time host monitoring and log analysis
 
-- Simulate threat behaviors for alert tuning and incident response
 
-- Serve as a portfolio-ready demo of threat detection and visibility engineering
 
----
+# cybersec-docker
 # cybersec-docker
 
 Cybersec-Docker — a ready-to-run, Docker Compose based sandbox for security testing, detection development, and incident response practice.
@@ -97,18 +92,6 @@ docker compose up -d
 ./simulate-attacks.sh
 # open http://localhost:5601
 ```
-
-## Suggested keywords / tags
-
-cybersecurity, siem, elk, elasticsearch, kibana, auditbeat, filebeat, docker, docker-compose, detection, incident-response, threat-hunting
-
-## Contributing
-
-Contributions welcome. Please open issues or pull requests for fixes, enhancements, or suggested detection rules.
-
-## License
-
-If you haven't chosen one yet, consider adding a `LICENSE` file (MIT is a common choice for sample environments).
 
 ---
 
